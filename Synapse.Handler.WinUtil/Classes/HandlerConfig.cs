@@ -7,19 +7,22 @@ using System.IO;
 using System.Xml.Serialization;
 using System.Xml;
 
+using Synapse.Core;
+
 using YamlDotNet.Serialization;
 
 using Synapse.Core.Utilities;
 
-namespace Synapse.Handlers.Template
+namespace Synapse.Handlers.WinUtil
 {
-    public class HandlerParameters
+    public class HandlerConfig
     {
         [XmlElement]
-        public String ParamValue1 { get; set; }
+        public String ConfigValue1 { get; set; }
         [XmlElement]
-        public bool ParamValue2 { get; set; }
-        [XmlArrayItem(ElementName = "ParamValue3")]
-        public List<String> ParamValues3 { get; set; }
+        public int ConfigValue2 { get; set; }
+        [XmlArrayItem(ElementName ="ConfigValue3")]
+        public List<String> ConfigValues3 { get; set; }
     }
+
 }
