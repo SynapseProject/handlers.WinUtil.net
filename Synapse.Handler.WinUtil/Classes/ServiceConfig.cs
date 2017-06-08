@@ -29,15 +29,17 @@ namespace Synapse.Handlers.WinUtil
 		public string LogOnAs { get; set; }
 		[XmlElement]
 		public ServiceStartMode StartMode { get; set; }
-		[XmlElement]
-		public string State { get; set; }
-		[XmlElement]
+        [XmlElement]
+        public string State { get; set; }
+        [XmlElement]
 		public bool AcceptStop { get; set; }
 		[XmlElement]
 		public int ProcessId { get; set; }
+        [XmlElement]
+        public string ErrorControl { get; set; }
 
 
-		public string ToXml(bool indent)
+        public string ToXml(bool indent)
 		{
 			return Utils.Serialize<ServiceConfig>( this, indent );
 		}

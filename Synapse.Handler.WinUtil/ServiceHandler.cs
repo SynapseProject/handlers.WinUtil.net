@@ -95,6 +95,7 @@ public class ServiceHandler : HandlerRuntimeBase
             OnLogMessage(service.Name, "DisplayName : " + status.DisplayName);
             OnLogMessage(service.Name, "Status      : " + status.State);
             OnLogMessage(service.Name, "Type        : " + status.ServiceType);
+            OnLogMessage(service.Name, "ErrorCtrl   : " + status.ErrorControl);
 
         }
     }

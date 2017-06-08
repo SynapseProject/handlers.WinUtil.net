@@ -31,6 +31,7 @@ namespace Synapse.Handlers.WinUtil
 				config.PathName = service.GetPropertyValue( "PathName" ).ToString();
 				config.ProcessId = int.Parse( service.GetPropertyValue( "ProcessId" ).ToString() );
                 config.ServiceType = service.GetPropertyValue("ServiceType").ToString();
+                config.ErrorControl = service.GetPropertyValue("ErrorControl").ToString();
 
 				string startMode = service.GetPropertyValue( "StartMode" ).ToString();
 				if( startMode == "Auto" ) { startMode = "Automatic"; }
@@ -341,7 +342,7 @@ namespace Synapse.Handlers.WinUtil
 		static ManagementObjectCollection GetServicesByServiceName(string serviceName, string machineName)
 		{
             ObjectQuery query = new ObjectQuery(string.Format(
-                "SELECT Name, DisplayName, PathName, StartName, ProcessId, State, Started, StartMode, AcceptStop, ServiceType FROM Win32_Service WHERE name = '{0}'", serviceName));
+                "SELECT Name, DisplayName, PathName, StartName, ProcessId, State, Started, StartMode, AcceptStop, ServiceType, ErrorControl FROM Win32_Service WHERE name = '{0}'", serviceName));
             ServiceUtilWmiHelper helper = new ServiceUtilWmiHelper( machineName );
 			return helper.Query( query, WmiPath.Root );
 		}
