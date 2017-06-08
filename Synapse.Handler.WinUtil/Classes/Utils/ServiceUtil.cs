@@ -55,12 +55,15 @@ namespace Synapse.Handlers.WinUtil
 		/// <param name="millisecondsTimeout">Timeout on waiting for Running status.  Values less than or equal to zero will wait infinitely, positive value equals milliseconds to wait.</param>
 		/// <param name="desiredStartMode">Sets the StartMode of the service.</param>
 		/// <returns>True if status == Running, otherwise false.</returns>
-		public static bool Start(string serviceName, string machineName, int millisecondsTimeout, ServiceStartMode desiredStartMode = ServiceStartMode.Unchanged)
+		public static bool Start(string serviceName, string machineName, int millisecondsTimeout, ServiceStartMode desiredStartMode = ServiceStartMode.Unchanged, String[] arguments = null)
 		{
 			ServiceController sc = new ServiceController( serviceName, machineName );
 			try
 			{
-				sc.Start();
+                if (arguments == null)
+                    sc.Start();
+                else
+                    sc.Start(arguments);
 				if( millisecondsTimeout > 0 )
 				{
 					sc.WaitForStatus( ServiceControllerStatus.Running, TimeSpan.FromMilliseconds( millisecondsTimeout ) );
@@ -220,8 +223,8 @@ namespace Synapse.Handlers.WinUtil
 			return result;
 		}
 
-		public static ServiceReturnCode CreateService(string serviceName, string machineName, string displayName, string description, string pathName, ServiceStartMode startMode,
-			string startName = null, string password = null, string parameters = null, 
+		public static ServiceReturnCode CreateService(string serviceName, string machineName, string displayName, string description, 
+            string pathName, ServiceStartMode startMode, string startName = null, string password = null, 
 			WindowsServiceType serviceType = WindowsServiceType.OwnProcess, ErrorControlAction errorControl = ErrorControlAction.UserIsNotified,
 			bool interactWithDesktop = false, string loadOrderGroup = null,
 			string[] loadOrderGroupDependencies = null, string[] svcDependencies = null)
@@ -237,11 +240,6 @@ namespace Synapse.Handlers.WinUtil
 			{
 				startMode = ServiceStartMode.Automatic;
 			}
-
-            if (!string.IsNullOrEmpty(parameters))
-            {
-                execPath = string.Format("{0} {1}", pathName, parameters);
-            }
 
 			inparms["Name"] = serviceName;
 			inparms["DisplayName"] = displayName;

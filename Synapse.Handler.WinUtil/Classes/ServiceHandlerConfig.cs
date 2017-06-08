@@ -23,6 +23,8 @@ namespace Synapse.Handlers.WinUtil
         public int Timeout { get; set; } = 0;
         [XmlElement]
         public bool RunSequential { get; set; } = false;
+        [XmlElement]
+        public bool StartOnCreate { get; set; } = false;
     }
 
 }

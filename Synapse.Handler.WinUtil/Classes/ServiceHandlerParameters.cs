@@ -38,7 +38,7 @@ namespace Synapse.Handlers.WinUtil
         [XmlElement]
         public String StartAsPassword { get; set; }
         [XmlElement]
-        public String Parameters { get; set; }
+        public List<String> StartParameters { get; set; }
         [XmlElement]
         public WindowsServiceType Type { get; set; } = WindowsServiceType.OwnProcess;
         [XmlElement]
@@ -46,7 +46,7 @@ namespace Synapse.Handlers.WinUtil
         [XmlElement]
         public bool InteractWithDesktop { get; set; } = false;
         [XmlElement]
-        public String LoadOderGroup { get; set; }
+        public String LoadOrderGroup { get; set; }
         [XmlArrayItem(ElementName = "LoadOrderGroupDependency")]
         public List<String> LoadOrderGroupDependencies { get; set; }
         [XmlArrayItem(ElementName = "ServiceDependency")]

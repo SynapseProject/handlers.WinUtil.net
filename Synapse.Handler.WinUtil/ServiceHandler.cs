@@ -48,14 +48,18 @@ public class ServiceHandler : HandlerRuntimeBase
 
         ServiceConfig status = null;
         ServiceReturnCode rc = ServiceReturnCode.NotSupported;
+        bool success = false;
 
         switch (action)
         {
             case ServiceAction.Create:
                 rc = ServiceUtil.CreateService(service.Name, service.Server, service.DisplayName, service.Description, service.BinPath,
-                                                service.StartMode, service.StartAsUser, service.StartAsPassword, service.Parameters,
-                                                service.Type, service.OnError, service.InteractWithDesktop, service.LoadOderGroup,
+                                                service.StartMode, service.StartAsUser, service.StartAsPassword,
+                                                service.Type, service.OnError, service.InteractWithDesktop, service.LoadOrderGroup,
                                                 loadOrderGroupDependencies, serviceDependencies);
+                if (config.StartOnCreate == true)
+                    success = ServiceUtil.Start(service.Name, service.Server, timeout, service.StartMode);
+
                 status = ServiceUtil.QueryService(service.Name, service.Server);
                 break;
             case ServiceAction.Delete:
@@ -65,17 +69,17 @@ public class ServiceHandler : HandlerRuntimeBase
                 status = ServiceUtil.QueryService(service.Name, service.Server);
                 break;
             case ServiceAction.Start:
-                bool startStatus = ServiceUtil.Start(service.Name, service.Server, timeout, service.StartMode);
+                success = ServiceUtil.Start(service.Name, service.Server, timeout, service.StartMode, service.StartParameters?.ToArray<String>());
                 status = ServiceUtil.QueryService(service.Name, service.Server);
                 break;
             case ServiceAction.Stop:
-                bool stopStatus = ServiceUtil.Stop(service.Name, service.Server, timeout, service.StartMode);
+                success = ServiceUtil.Stop(service.Name, service.Server, timeout, service.StartMode);
                 status = ServiceUtil.QueryService(service.Name, service.Server);
                 break;
             case ServiceAction.Restart:
-                bool restartStatus = ServiceUtil.Stop(service.Name, service.Server, timeout, ServiceStartMode.Unchanged);
+                success = ServiceUtil.Stop(service.Name, service.Server, timeout, ServiceStartMode.Unchanged);
                 Thread.Sleep(5000);
-                restartStatus = ServiceUtil.Start(service.Name, service.Server, timeout, service.StartMode);
+                success = ServiceUtil.Start(service.Name, service.Server, timeout, service.StartMode);
                 status = ServiceUtil.QueryService(service.Name, service.Server);
                 break;
             case ServiceAction.StartMode:
