@@ -33,7 +33,26 @@ namespace Synapse.Handlers.WinUtil
                 config.ServiceType = service.GetPropertyValue("ServiceType").ToString();
                 config.ErrorControl = service.GetPropertyValue("ErrorControl").ToString();
 
-				string startMode = service.GetPropertyValue( "StartMode" ).ToString();
+                config.AcceptPause = bool.Parse(service.GetPropertyValue("AcceptPause").ToString());
+                config.Caption = service.GetPropertyValue("Caption").ToString();
+                config.CheckPoint = int.Parse(service.GetPropertyValue("CheckPoint").ToString());
+                config.CreationClassName = service.GetPropertyValue("CreationClassName").ToString();
+                config.DelayedAutoStart = bool.Parse(service.GetPropertyValue("DelayedAutoStart").ToString());
+                config.DesktopInteract = bool.Parse(service.GetPropertyValue("DesktopInteract").ToString());
+                config.ExitCode = int.Parse(service.GetPropertyValue("ExitCode").ToString());
+                config.InstallDate = service.GetPropertyValue("InstallDate")?.ToString();
+                config.Name = service.GetPropertyValue("Name")?.ToString();
+                config.ServiceSpecificExitCode = int.Parse(service.GetPropertyValue("ServiceSpecificExitCode")?.ToString());
+                config.Started = bool.Parse(service.GetPropertyValue("Started")?.ToString());
+                config.StartName = service.GetPropertyValue("StartName")?.ToString();
+                config.State = service.GetPropertyValue("State")?.ToString();
+                config.Status = service.GetPropertyValue("Status")?.ToString();
+                config.SystemCreationClassName = service.GetPropertyValue("SystemCreationClassName")?.ToString();
+                config.SystemName = service.GetPropertyValue("SystemName")?.ToString();
+                config.TagId = int.Parse(service.GetPropertyValue("TagId")?.ToString());
+                config.WaitHint = int.Parse(service.GetPropertyValue("WaitHint")?.ToString());
+
+                string startMode = service.GetPropertyValue( "StartMode" ).ToString();
 				if( startMode == "Auto" ) { startMode = "Automatic"; }
 				config.StartMode = (ServiceStartMode)Enum.Parse( typeof( ServiceStartMode ), startMode );
 			}
@@ -342,7 +361,7 @@ namespace Synapse.Handlers.WinUtil
 		static ManagementObjectCollection GetServicesByServiceName(string serviceName, string machineName)
 		{
             ObjectQuery query = new ObjectQuery(string.Format(
-                "SELECT Name, DisplayName, PathName, StartName, ProcessId, State, Started, StartMode, AcceptStop, ServiceType, ErrorControl FROM Win32_Service WHERE name = '{0}'", serviceName));
+                "SELECT * FROM Win32_Service WHERE name = '{0}'", serviceName));
             ServiceUtilWmiHelper helper = new ServiceUtilWmiHelper( machineName );
 			return helper.Query( query, WmiPath.Root );
 		}

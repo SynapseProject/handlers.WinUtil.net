@@ -34,9 +34,9 @@ namespace Synapse.Handlers.WinUtil
         [XmlElement]
         public ServiceStartMode StartMode { get; set; } = ServiceStartMode.Manual;
         [XmlElement]
-        public String StartAsUser { get; set; }
+        public String StartName { get; set; }
         [XmlElement]
-        public String StartAsPassword { get; set; }
+        public String StartPassword { get; set; }
         [XmlElement]
         public List<String> StartParameters { get; set; }
         [XmlElement]

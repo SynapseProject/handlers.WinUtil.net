@@ -38,6 +38,41 @@ namespace Synapse.Handlers.WinUtil
         [XmlElement]
         public string ErrorControl { get; set; }
 
+        [XmlElement]
+        public bool AcceptPause { get; set; }
+        [XmlElement]
+        public string Caption { get; set; }
+        [XmlElement]
+        public int CheckPoint { get; set; }
+        [XmlElement]
+        public string CreationClassName { get; set; }
+        [XmlElement]
+        public bool DelayedAutoStart { get; set; }
+        [XmlElement]
+        public bool DesktopInteract { get; set; }
+        [XmlElement]
+        public int ExitCode { get; set; }
+        [XmlElement]
+        public string InstallDate { get; set; }
+        [XmlElement]
+        public string Name { get; set; }
+        [XmlElement]
+        public int ServiceSpecificExitCode { get; set; }
+        [XmlElement]
+        public bool Started { get; set; }
+        [XmlElement]
+        public string StartName { get; set; }
+        [XmlElement]
+        public string Status { get; set; }
+        [XmlElement]
+        public string SystemCreationClassName { get; set; }
+        [XmlElement]
+        public string SystemName { get; set; }
+        [XmlElement]
+        public int TagId { get; set; }
+        [XmlElement]
+        public int WaitHint { get; set; }
+
 
         public string ToXml(bool indent)
 		{

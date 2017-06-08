@@ -54,7 +54,7 @@ public class ServiceHandler : HandlerRuntimeBase
         {
             case ServiceAction.Create:
                 rc = ServiceUtil.CreateService(service.Name, service.Server, service.DisplayName, service.Description, service.BinPath,
-                                                service.StartMode, service.StartAsUser, service.StartAsPassword,
+                                                service.StartMode, service.StartName, service.StartPassword,
                                                 service.Type, service.OnError, service.InteractWithDesktop, service.LoadOrderGroup,
                                                 loadOrderGroupDependencies, serviceDependencies);
                 if (config.StartOnCreate == true)
@@ -97,6 +97,7 @@ public class ServiceHandler : HandlerRuntimeBase
             OnLogMessage(service.Name, "Type        : " + status.ServiceType);
             OnLogMessage(service.Name, "ErrorCtrl   : " + status.ErrorControl);
 
+            OnLogMessage(service.Name, status.ToXml(true));
         }
     }
 
