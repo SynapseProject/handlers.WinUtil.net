@@ -16,6 +16,7 @@ public class ServiceHandler : HandlerRuntimeBase
 {
     ServiceHandlerConfig config = null;
     ServiceHandlerParameters parameters = null;
+    ServiceResults results = new ServiceResults();
 
     public override IHandlerRuntime Initialize(string configStr)
     {
@@ -36,6 +37,20 @@ public class ServiceHandler : HandlerRuntimeBase
             ProcessServiceRequest(config.Action, service, config.Timeout);
         }
 
+        switch (config.OutputType)
+        {
+            case OutputTypeType.Xml:
+                result.ExitData = results.ToXml(config.PrettyPrint);
+                break;
+            case OutputTypeType.Yaml:
+                result.ExitData = results.ToYaml();
+                break;
+            case OutputTypeType.Json:
+                result.ExitData = results.ToJson(config.PrettyPrint);
+                break;
+        }
+
+        OnLogMessage("Results", result.ExitData?.ToString());
         return result;
     }
 
@@ -43,8 +58,6 @@ public class ServiceHandler : HandlerRuntimeBase
     {
         string[] loadOrderGroupDependencies = service.LoadOrderGroupDependencies?.ToArray<String>();
         string[] serviceDependencies = service.ServiceDependencies?.ToArray<String>();
-
-        OnLogMessage(service.Name, "Action = " + action);
 
         ServiceConfig status = null;
         ServiceReturnCode rc = ServiceReturnCode.NotSupported;
@@ -91,13 +104,8 @@ public class ServiceHandler : HandlerRuntimeBase
 
         if (status != null)
         {
-            OnLogMessage(service.Name, "Name        : " + status.ServiceName);
-            OnLogMessage(service.Name, "DisplayName : " + status.DisplayName);
-            OnLogMessage(service.Name, "Status      : " + status.State);
-            OnLogMessage(service.Name, "Type        : " + status.ServiceType);
-            OnLogMessage(service.Name, "ErrorCtrl   : " + status.ErrorControl);
-
-            OnLogMessage(service.Name, status.ToXml(true));
+            OnLogMessage(action.ToString(), "Name : [" + status.ServiceName + "] Status : [" + status.State + "]");
+            results.Add(status);
         }
     }
 

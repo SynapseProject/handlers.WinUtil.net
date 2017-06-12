@@ -64,11 +64,13 @@
     <Compile Include="Classes\ServiceConfig.cs" />
     <Compile Include="Classes\ServiceNativeMethods.cs" />
     <Compile Include="Classes\Utils\AppPoolUtil.cs" />
+    <Compile Include="Classes\Utils\JsonHelpers.cs" />
     <Compile Include="Classes\Utils\ServiceUtil.cs" />
     <Compile Include="Classes\Utils\ServiceUtilWmi.cs" />
-    <Compile Include="Classes\Utils\Utils.cs" />
     <Compile Include="Classes\Utils\WmiManagementBase.cs" />
     <Compile Include="Classes\Utils\WmiTimeout.cs" />
+    <Compile Include="Classes\Utils\XmlHelpers.cs" />
+    <Compile Include="Classes\Utils\YamlHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceHandler.cs" />
   </ItemGroup>

@@ -1,9 +1,40 @@
 ﻿using System;
 using System.Xml.Serialization;
+using System.Collections.Generic;
 
 namespace Synapse.Handlers.WinUtil
 {
-	[Serializable]
+    [Serializable]
+    public class ServiceResults
+    {
+        [XmlArrayItem(ElementName = "Service")]
+        public List<ServiceConfig> Services { get; set; } = new List<ServiceConfig>();
+
+        public void Add(ServiceConfig service)
+        {
+            lock (Services)
+            {
+                Services.Add(service);
+            }
+        }
+
+        public string ToXml(bool indent)
+        {
+            return XmlHelpers.Serialize<ServiceResults>(this, indent);
+        }
+
+        public string ToYaml()
+        {
+            return YamlHelpers.Serialize(this);
+        }
+
+        public string ToJson(bool indent)
+        {
+            return YamlHelpers.Serialize(this, true, false, indent);
+        }
+    }
+
+    [Serializable]
 	public class ServiceConfig : IProcessState
 	{
 		public ServiceConfig()
@@ -76,7 +107,7 @@ namespace Synapse.Handlers.WinUtil
 
         public string ToXml(bool indent)
 		{
-			return Utils.Serialize<ServiceConfig>( this, indent );
+			return XmlHelpers.Serialize<ServiceConfig>( this, indent );
 		}
 	}
 }

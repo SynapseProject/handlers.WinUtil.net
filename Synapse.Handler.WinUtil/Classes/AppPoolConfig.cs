@@ -25,7 +25,7 @@ namespace Synapse.Handlers.WinUtil
 
 		public string ToXml(bool indent)
 		{
-			return Utils.Serialize<AppPoolConfig>( this, indent );
+			return XmlHelpers.Serialize<AppPoolConfig>( this, indent );
 		}
 	}
 }

@@ -25,6 +25,10 @@ namespace Synapse.Handlers.WinUtil
         public bool RunSequential { get; set; } = false;
         [XmlElement]
         public bool StartOnCreate { get; set; } = false;
+        [XmlElement]
+        public OutputTypeType OutputType { get; set; } = OutputTypeType.Xml;
+        [XmlElement]
+        public bool PrettyPrint { get; set; } = true;
     }
 
 }

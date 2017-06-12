@@ -101,4 +101,13 @@ namespace Synapse.Handlers.WinUtil
         Paused = 6,
         Continuing = 7
 	}
+
+    public enum OutputTypeType
+    {
+        None,
+        Xml,
+        Json,
+        Yaml
+    }
+
 }
