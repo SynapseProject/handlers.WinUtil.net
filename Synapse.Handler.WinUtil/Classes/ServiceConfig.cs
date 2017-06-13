@@ -107,7 +107,7 @@ namespace Synapse.Handlers.WinUtil
 
         public string ToXml(bool indent)
 		{
-			return XmlHelpers.Serialize<ServiceConfig>( this, indent );
+			return XmlHelpers.Serialize<ServiceConfig>( this, true, true, indent );
 		}
 	}
 }
