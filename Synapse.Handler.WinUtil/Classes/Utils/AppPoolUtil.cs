@@ -137,7 +137,7 @@ namespace Synapse.Handlers.WinUtil
 		/// <param name="machineName">The server on which the AppPool will be created.</param>
 		/// <param name="millisecondsTimeout">Timeout value on wait for Create to complete.</param>
 		/// <returns>The Wmi ManagementPath</returns>
-		public static ManagementPath Create(string name, string machineName, int millisecondsTimeout)
+		public static ManagementPath Create(string name, string machineName, int millisecondsTimeout, string managedRunTimeVersion = "v4.0", int identityType = 4, string username = null, string password = null)
 		{
 			PutOptions options = new PutOptions();
 			options.Timeout = System.TimeSpan.FromMinutes( Convert.ToDouble( millisecondsTimeout ) );
@@ -145,10 +145,18 @@ namespace Synapse.Handlers.WinUtil
 			IisAppPoolUtilWmiHelper helper = new IisAppPoolUtilWmiHelper( machineName );
 			ManagementObject appPool = helper.CreateManagementObject( "IIsApplicationPoolSetting" );
 			appPool.Properties["Name"].Value = string.Format( "W3SVC/AppPools/{0}", name );
-			appPool.Properties["AppPoolIdentityType"].Value = 3;
-			appPool.Properties["ManagedRuntimeVersion"].Value = "v4.0";
+            appPool.Properties["AppPoolIdentityType"].Value = identityType;
+			appPool.Properties["ManagedRuntimeVersion"].Value = managedRunTimeVersion;
 
-			return appPool.Put( options );
+            if (identityType == 3)
+            {
+                if (username != null)
+                    appPool.Properties["WAMUserName"].Value = username;
+                if (password != null)
+                    appPool.Properties["WAMUserPass"].Value = password;
+            }
+
+            return appPool.Put( options );
 		}
 
 		/// <summary>

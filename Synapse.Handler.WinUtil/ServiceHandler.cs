@@ -32,9 +32,19 @@ public class ServiceHandler : HandlerRuntimeBase
         if (startInfo.Parameters != null)
             parameters = this.DeserializeOrDefault<ServiceHandlerParameters>(startInfo.Parameters);
 
-        foreach (Service service in parameters.Services)
+        if (config.RunSequential)
         {
-            ProcessServiceRequest(config.Action, service, config.Timeout);
+            foreach (Service service in parameters.Services)
+            {
+                ProcessServiceRequest(config.Action, service, config.Timeout);
+            }
+        }
+        else
+        {
+            Parallel.ForEach(parameters.Services, service =>
+            {
+                ProcessServiceRequest(config.Action, service, config.Timeout);
+            });
         }
 
         switch (config.OutputType)

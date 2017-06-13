@@ -20,7 +20,7 @@ namespace Synapse.Handlers.WinUtil
 
         public string ToXml(bool indent)
         {
-            return XmlHelpers.Serialize<ServiceResults>(this, indent);
+            return XmlHelpers.Serialize<ServiceResults>(this, true, true, indent);
         }
 
         public string ToYaml()

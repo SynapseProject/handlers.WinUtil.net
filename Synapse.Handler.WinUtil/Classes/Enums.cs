@@ -110,4 +110,12 @@ namespace Synapse.Handlers.WinUtil
         Yaml
     }
 
+    public enum AppPoolIdentityType
+    {
+        LocalSystem = 0,
+        LocalService = 1,
+        NetworkService = 2,
+        CustomAccount = 3,
+        ApplicationPoolIdentity = 4
+    }
 }
