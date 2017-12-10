@@ -111,7 +111,7 @@ public class IISAppPoolHandler : HandlerRuntimeBase
     {
         return new IISAppPoolHandlerConfig()
         {
-            Action = ServiceAction.Start,
+            Action = ServiceAction.Stop,
             OutputType = OutputTypeType.Yaml,
             PrettyPrint = true,
             RunSequential = true,

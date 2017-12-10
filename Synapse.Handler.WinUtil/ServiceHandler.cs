@@ -123,7 +123,7 @@ public class ServiceHandler : HandlerRuntimeBase
     {
         return new ServiceHandlerConfig()
         {
-            Action = ServiceAction.Start,
+            Action = ServiceAction.Stop,
             OutputType = OutputTypeType.Yaml,
             PrettyPrint = true,
             RunSequential = true,

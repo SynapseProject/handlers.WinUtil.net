@@ -101,7 +101,7 @@ public class ScheduledTaskHandler : HandlerRuntimeBase
     {
         return new ScheduledTaskHandlerConfig()
         {
-            Action = ServiceAction.Start,
+            Action = ServiceAction.Stop,
             OutputType = OutputTypeType.Yaml,
             PrettyPrint = true,
             RunSequential = true,
