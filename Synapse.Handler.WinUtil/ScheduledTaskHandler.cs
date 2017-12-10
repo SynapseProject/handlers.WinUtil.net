@@ -99,12 +99,28 @@ public class ScheduledTaskHandler : HandlerRuntimeBase
 
     public override object GetConfigInstance()
     {
-        throw new NotImplementedException();
+        return new ScheduledTaskHandlerConfig()
+        {
+            Action = ServiceAction.Start,
+            OutputType = OutputTypeType.Yaml,
+            PrettyPrint = true,
+            RunSequential = true,
+            Timeout = 30000
+        };
     }
 
     public override object GetParametersInstance()
     {
-        throw new NotImplementedException();
+        return new ScheduledTaskHandlerParameters()
+        {
+            Tasks = new List<ScheduledTask>()
+            {
+                new ScheduledTask()
+                {
+                    Name = "Task 0",
+                    Server = "localhost"
+                }
+            }
+        };
     }
 }
-

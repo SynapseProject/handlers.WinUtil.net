@@ -109,12 +109,33 @@ public class IISAppPoolHandler : HandlerRuntimeBase
 
     public override object GetConfigInstance()
     {
-        throw new NotImplementedException();
+        return new IISAppPoolHandlerConfig()
+        {
+            Action = ServiceAction.Start,
+            OutputType = OutputTypeType.Yaml,
+            PrettyPrint = true,
+            RunSequential = true,
+            Timeout = 30000
+        };
     }
 
     public override object GetParametersInstance()
     {
-        throw new NotImplementedException();
+        return new IISAppPoolHandlerParameters()
+        {
+            IISAppPools = new List<IISAppPool>()
+            {
+                new IISAppPool()
+                {
+                    Domain = "domain",
+                    IdentityType = AppPoolIdentityType.ApplicationPoolIdentity,
+                    ManagedRuntimeVersion = "4.5.2",
+                    Name = "AppPoolName",
+                    Password = "mySuperSecretPassword",
+                    Server = "localhost",
+                    UserName = "UserName"
+                }
+            }
+        };
     }
 }
-

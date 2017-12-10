@@ -121,12 +121,42 @@ public class ServiceHandler : HandlerRuntimeBase
 
     public override object GetConfigInstance()
     {
-        throw new NotImplementedException();
+        return new ServiceHandlerConfig()
+        {
+            Action = ServiceAction.Start,
+            OutputType = OutputTypeType.Yaml,
+            PrettyPrint = true,
+            RunSequential = true,
+            StartOnCreate = true,
+            Timeout = 30000
+        };
     }
 
     public override object GetParametersInstance()
     {
-        throw new NotImplementedException();
+        return new ServiceHandlerParameters()
+        {
+            Services = new List<Service>()
+            {
+                new Service()
+                {
+                    BinPath = @"c:\path\myService.exe",
+                    Description = "service description",
+                    DisplayName = "My Service",
+                    InteractWithDesktop = false,
+                    LoadOrderGroup = "myLoadOrderGroup",
+                    LoadOrderGroupDependencies = new List<string>(){ "dep0", "dep1", "dep2" },
+                    Name = "MyService",
+                    OnError = ErrorControlAction.SystemAttemptStartWithGoodConfiguration,
+                    Server = "localhost",
+                    ServiceDependencies = new List<string>(){ "dep0", "dep1", "dep2" },
+                    StartMode = ServiceStartMode.Automatic,
+                    StartName = "startName",
+                    StartParameters = new List<string>(){ "parm0", "parm1", "parm2" },
+                    StartPassword = "mySuperSecretPassword",
+                    Type = WindowsServiceType.OwnProcess
+                }
+            }
+        };
     }
 }
-
