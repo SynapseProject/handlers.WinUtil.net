@@ -14,53 +14,58 @@ using Synapse.Handlers.WinUtil;
 
 public class ServiceHandler : HandlerRuntimeBase
 {
-    ServiceHandlerConfig config = null;
-    ServiceHandlerParameters parameters = null;
-    ServiceResults results = new ServiceResults();
+    ServiceHandlerConfig _config = null;
+    ServiceHandlerParameters _parameters = null;
+    ServiceResults _results = new ServiceResults();
+    bool _isDryRun = false;
 
     public override IHandlerRuntime Initialize(string configStr)
     {
-        config = this.DeserializeOrDefault<ServiceHandlerConfig>(configStr);
-        return base.Initialize(configStr);
+        _config = this.DeserializeOrDefault<ServiceHandlerConfig>( configStr );
+        return base.Initialize( configStr );
     }
 
     public override ExecuteResult Execute(HandlerStartInfo startInfo)
     {
-        ExecuteResult result = new ExecuteResult();
-        result.Status = StatusType.Success;
-
-        if (startInfo.Parameters != null)
-            parameters = this.DeserializeOrDefault<ServiceHandlerParameters>(startInfo.Parameters);
-
-        if (config.RunSequential)
+        ExecuteResult result = new ExecuteResult
         {
-            foreach (Service service in parameters.Services)
-            {
-                ProcessServiceRequest(config.Action, service, config.Timeout);
-            }
-        }
+            Status = StatusType.Success
+        };
+
+        _isDryRun = startInfo.IsDryRun;
+
+        if( startInfo.Parameters != null )
+            _parameters = this.DeserializeOrDefault<ServiceHandlerParameters>( startInfo.Parameters );
+
+
+        if( _config.RunSequential )
+            foreach( Service service in _parameters.Services )
+                ProcessServiceRequest( _config.Action, service, _config.Timeout );
         else
-        {
-            Parallel.ForEach(parameters.Services, service =>
-            {
-                ProcessServiceRequest(config.Action, service, config.Timeout);
-            });
-        }
+            Parallel.ForEach( _parameters.Services,
+                service => ProcessServiceRequest( _config.Action, service, _config.Timeout ) );
 
-        switch (config.OutputType)
+
+        switch( _config.OutputType )
         {
             case OutputTypeType.Xml:
-                result.ExitData = results.ToXml(config.PrettyPrint);
+            {
+                result.ExitData = _results.ToXml( _config.PrettyPrint );
                 break;
+            }
             case OutputTypeType.Yaml:
-                result.ExitData = results.ToYaml();
+            {
+                result.ExitData = _results.ToYaml();
                 break;
+            }
             case OutputTypeType.Json:
-                result.ExitData = results.ToJson(config.PrettyPrint);
+            {
+                result.ExitData = _results.ToJson( _config.PrettyPrint );
                 break;
+            }
         }
 
-        OnLogMessage("Results", result.ExitData?.ToString());
+        OnLogMessage( "Results", result.ExitData?.ToString() );
         return result;
     }
 
@@ -71,51 +76,70 @@ public class ServiceHandler : HandlerRuntimeBase
 
         ServiceConfig status = null;
         ServiceReturnCode rc = ServiceReturnCode.NotSupported;
-        bool success = false;
+        bool success = _isDryRun;
 
-        switch (action)
+        switch( action )
         {
             case ServiceAction.Create:
-                rc = ServiceUtil.CreateService(service.Name, service.Server, service.DisplayName, service.Description, service.BinPath,
+            {
+                rc = ServiceUtil.CreateService( service.Name, service.Server, service.DisplayName, service.Description, service.BinPath,
                                                 service.StartMode, service.StartName, service.StartPassword,
                                                 service.Type, service.OnError, service.InteractWithDesktop, service.LoadOrderGroup,
-                                                loadOrderGroupDependencies, serviceDependencies);
-                if (config.StartOnCreate == true)
-                    success = ServiceUtil.Start(service.Name, service.Server, timeout, service.StartMode);
+                                                loadOrderGroupDependencies, serviceDependencies );
+                if( _config.StartOnCreate == true )
+                    success = ServiceUtil.Start( service.Name, service.Server, timeout, service.StartMode );
 
-                status = ServiceUtil.QueryService(service.Name, service.Server);
+                status = ServiceUtil.QueryService( service.Name, service.Server );
                 break;
+            }
             case ServiceAction.Delete:
-                rc = ServiceUtil.DeleteService(service.Name, service.Server);
+            {
+                rc = ServiceUtil.DeleteService( service.Name, service.Server );
                 break;
+            }
             case ServiceAction.Query:
-                status = ServiceUtil.QueryService(service.Name, service.Server);
+            {
+                status = ServiceUtil.QueryService( service.Name, service.Server );
                 break;
+            }
             case ServiceAction.Start:
-                success = ServiceUtil.Start(service.Name, service.Server, timeout, service.StartMode, service.StartParameters?.ToArray<String>());
-                status = ServiceUtil.QueryService(service.Name, service.Server);
+            {
+                if( !_isDryRun )
+                    success = ServiceUtil.Start( service.Name, service.Server, timeout, service.StartMode, service.StartParameters?.ToArray<String>() );
+                status = ServiceUtil.QueryService( service.Name, service.Server );
                 break;
+            }
             case ServiceAction.Stop:
-                success = ServiceUtil.Stop(service.Name, service.Server, timeout, service.StartMode);
-                status = ServiceUtil.QueryService(service.Name, service.Server);
+            {
+                if( !_isDryRun )
+                    success = ServiceUtil.Stop( service.Name, service.Server, timeout, service.StartMode );
+                status = ServiceUtil.QueryService( service.Name, service.Server );
                 break;
+            }
             case ServiceAction.Restart:
-                success = ServiceUtil.Stop(service.Name, service.Server, timeout, ServiceStartMode.Unchanged);
-                Thread.Sleep(5000);
-                success = ServiceUtil.Start(service.Name, service.Server, timeout, service.StartMode);
-                status = ServiceUtil.QueryService(service.Name, service.Server);
-                break;
+            {
+                if( !_isDryRun )
+                {
+                    success = ServiceUtil.Stop( service.Name, service.Server, timeout, ServiceStartMode.Unchanged );
+                    Thread.Sleep( 5000 );
+                    success = ServiceUtil.Start( service.Name, service.Server, timeout, service.StartMode );
+                }
+                status = ServiceUtil.QueryService( service.Name, service.Server );
+            }
+            break;
             case ServiceAction.StartMode:
-                rc = ServiceUtil.ChangeStartMode(service.Name, service.Server, service.StartMode);
-                status = ServiceUtil.QueryService(service.Name, service.Server);
+            {
+                if( !_isDryRun )
+                    rc = ServiceUtil.ChangeStartMode( service.Name, service.Server, service.StartMode );
+                status = ServiceUtil.QueryService( service.Name, service.Server );
                 break;
-
+            }
         }
 
-        if (status != null)
+        if( status != null )
         {
-            OnLogMessage(action.ToString(), "Name : [" + status.ServiceName + "] Status : [" + status.State + "]");
-            results.Add(status);
+            OnLogMessage( action.ToString(), "Name : [" + status.ServiceName + "] Status : [" + status.State + "]" );
+            _results.Add( status );
         }
     }
 
