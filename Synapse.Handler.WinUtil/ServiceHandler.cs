@@ -82,19 +82,45 @@ public class ServiceHandler : HandlerRuntimeBase
         {
             case ServiceAction.Create:
             {
-                rc = ServiceUtil.CreateService( service.Name, service.Server, service.DisplayName, service.Description, service.BinPath,
-                                                service.StartMode, service.StartName, service.StartPassword,
-                                                service.Type, service.OnError, service.InteractWithDesktop, service.LoadOrderGroup,
-                                                loadOrderGroupDependencies, serviceDependencies );
-                if( _config.StartOnCreate == true )
-                    success = ServiceUtil.Start( service.Name, service.Server, timeout, service.StartMode );
+                    if (!_isDryRun)
+                    {
+                        rc = ServiceUtil.CreateService(service.Name, service.Server, service.DisplayName, service.Description, service.BinPath,
+                                                        service.StartMode, service.StartName, service.StartPassword,
+                                                        service.Type, service.OnError, service.InteractWithDesktop, service.LoadOrderGroup,
+                                                        loadOrderGroupDependencies, serviceDependencies);
+                        if (_config.StartOnCreate == true)
+                            success = ServiceUtil.Start(service.Name, service.Server, timeout, service.StartMode);
+                        status = ServiceUtil.QueryService(service.Name, service.Server);
+                    }
+                    else
+                    {
+                        // DryRun : Return mocked up ServiceConfig with values that WOULD have been created.
+                        ServiceConfig sc = new ServiceConfig();
+                        sc.Name = service.Name;
+                        sc.ServerName = service.Server;
+                        sc.DisplayName = service.DisplayName;
+                        sc.Description = service.Description;
+                        sc.PathName = service.BinPath;
+                        sc.StartMode = service.StartMode;
+                        sc.StartName = service.StartName;
+                        sc.ServiceType = service.Type.ToString();
+                        sc.ErrorControl = service.OnError.ToString();
+                        sc.DesktopInteract = service.InteractWithDesktop;
+                        status = sc;
+                    }
 
-                status = ServiceUtil.QueryService( service.Name, service.Server );
-                break;
+                    break;
             }
             case ServiceAction.Delete:
             {
-                rc = ServiceUtil.DeleteService( service.Name, service.Server );
+                if (!_isDryRun)
+                {
+                    rc = ServiceUtil.DeleteService(service.Name, service.Server);
+                }
+                else
+                {
+                    status = ServiceUtil.QueryService(service.Name, service.Server);
+                }
                 break;
             }
             case ServiceAction.Query:
