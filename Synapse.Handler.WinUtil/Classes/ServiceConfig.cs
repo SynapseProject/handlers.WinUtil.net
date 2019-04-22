@@ -2,70 +2,72 @@
 using System.Xml.Serialization;
 using System.Collections.Generic;
 
+using Synapse.Core.Utilities;
+
 namespace Synapse.Handlers.WinUtil
 {
     [Serializable]
     public class ServiceResults
     {
-        [XmlArrayItem(ElementName = "Service")]
+        [XmlArrayItem( ElementName = "Service" )]
         public List<ServiceConfig> Services { get; set; } = new List<ServiceConfig>();
 
         public void Add(ServiceConfig service)
         {
-            lock (Services)
+            lock( Services )
             {
-                Services.Add(service);
+                Services.Add( service );
             }
         }
 
         public string ToXml(bool indent)
         {
-            return XmlHelpers.Serialize<ServiceResults>(this, true, true, indent);
+            return XmlHelpers.Serialize<ServiceResults>( this, true, true, indent );
         }
 
         public string ToYaml()
         {
-            return YamlHelpers.Serialize(this);
+            return YamlHelpers.Serialize( this );
         }
 
         public string ToJson(bool indent)
         {
-            return YamlHelpers.Serialize(this, true, false, indent);
+            return YamlHelpers.Serialize( this, true, false, indent );
         }
     }
 
     [Serializable]
-	public class ServiceConfig : IProcessState
-	{
-		public ServiceConfig()
-		{
-			ServerName = "Unknown";
-			State = "Unknown";
-			ServiceName = "Unknown";
-		}
+    public class ServiceConfig : IProcessState
+    {
+        public ServiceConfig()
+        {
+            ServerName = "Unknown";
+            State = "Unknown";
+            ServiceName = "Unknown";
+        }
 
-		[XmlElement]
-		public string ServerName { get; set; }
-		[XmlElement]
-		public string DisplayName { get; set; }
+        [XmlElement]
+        public string ServerName { get; set; }
+        [XmlElement]
+        public string DisplayName { get; set; }
         [XmlElement]
         public string ServiceName { get; set; }
         [XmlElement]
         public string ServiceType { get; set; }
         [XmlElement]
-		public string Description { get; set; }
-		[XmlElement]
-		public string PathName { get; set; }
-		[XmlElement]
-		public string LogOnAs { get; set; }
-		[XmlElement]
-		public ServiceStartMode StartMode { get; set; }
+        public string Description { get; set; }
+        [XmlElement]
+        public string PathName { get; set; }
+        [XmlElement]
+        public string LogOnAs { get; set; }
+        [XmlElement]
+        public ServiceStartMode StartMode { get; set; }
         [XmlElement]
         public string State { get; set; }
         [XmlElement]
-		public bool AcceptStop { get; set; }
-		[XmlElement]
-		public int ProcessId { get; set; }
+        public bool AcceptStop { get; set; }
+        [XmlElement]
+        public int ProcessId { get; set; }
         [XmlElement]
         public string ErrorControl { get; set; }
 
@@ -106,8 +108,8 @@ namespace Synapse.Handlers.WinUtil
 
 
         public string ToXml(bool indent)
-		{
-			return XmlHelpers.Serialize<ServiceConfig>( this, true, true, indent );
-		}
-	}
+        {
+            return XmlHelpers.Serialize<ServiceConfig>( this, true, true, indent );
+        }
+    }
 }
