@@ -20,8 +20,8 @@ public class ScheduledTaskHandler : HandlerRuntimeBase
 
     public override IHandlerRuntime Initialize(string configStr)
     {
-        config = this.DeserializeOrDefault<ScheduledTaskHandlerConfig>(configStr);
-        return base.Initialize(configStr);
+        config = this.DeserializeOrDefault<ScheduledTaskHandlerConfig>( configStr );
+        return base.Initialize( configStr );
     }
 
     public override ExecuteResult Execute(HandlerStartInfo startInfo)
@@ -30,41 +30,41 @@ public class ScheduledTaskHandler : HandlerRuntimeBase
         result.Status = StatusType.Success;
 
         // TODO : Implement DryRun Functionality
-        if (startInfo.IsDryRun)
-            throw new NotImplementedException("Dry Run Functionality Has Not Yet Been Implemented.");
+        if( startInfo.IsDryRun )
+            throw new NotImplementedException( "Dry Run Functionality Has Not Yet Been Implemented." );
 
-        if (startInfo.Parameters != null)
-            parameters = this.DeserializeOrDefault<ScheduledTaskHandlerParameters>(startInfo.Parameters);
+        if( startInfo.Parameters != null )
+            parameters = this.DeserializeOrDefault<ScheduledTaskHandlerParameters>( startInfo.Parameters );
 
-        if (config.RunSequential)
+        if( config.RunSequential )
         {
-            foreach (ScheduledTask task in parameters.Tasks)
+            foreach( ScheduledTask task in parameters.Tasks )
             {
-                ProcessServiceRequest(config.Action, task, config.Timeout);
+                ProcessServiceRequest( config.Action, task, config.Timeout );
             }
         }
         else
         {
-            Parallel.ForEach(parameters.Tasks, task =>
-            {
-                ProcessServiceRequest(config.Action, task, config.Timeout);
-            });
+            Parallel.ForEach( parameters.Tasks, task =>
+             {
+                 ProcessServiceRequest( config.Action, task, config.Timeout );
+             } );
         }
 
-        switch (config.OutputType)
+        switch( config.OutputType )
         {
             case OutputTypeType.Xml:
-                result.ExitData = results.ToXml(config.PrettyPrint);
+                result.ExitData = results.ToXml( config.PrettyPrint );
                 break;
             case OutputTypeType.Yaml:
                 result.ExitData = results.ToYaml();
                 break;
             case OutputTypeType.Json:
-                result.ExitData = results.ToJson(config.PrettyPrint);
+                result.ExitData = results.ToJson( config.PrettyPrint );
                 break;
         }
 
-        OnLogMessage("Results", result.ExitData?.ToString());
+        OnLogMessage( "Results", result.ExitData?.ToString() );
 
         return result;
     }
@@ -74,29 +74,29 @@ public class ScheduledTaskHandler : HandlerRuntimeBase
         ScheduledTaskConfig status = null;
         bool success = false;
 
-        switch (action)
+        switch( action )
         {
             case ServiceAction.Query:
                 break;
-            case ServiceAction.Start:
-                success = ScheduledTaskUtil.Start(task.Name, task.Server);
+            case ServiceAction.Enable:
+                success = ScheduledTaskUtil.Enable( task.Name, task.Server );
                 break;
-            case ServiceAction.Stop:
-                success = ScheduledTaskUtil.Stop(task.Name, task.Server);
+            case ServiceAction.Disable:
+                success = ScheduledTaskUtil.Disable( task.Name, task.Server );
                 break;
-            case ServiceAction.Restart:
-                success = ScheduledTaskUtil.Stop(task.Name, task.Server);
-                System.Threading.Thread.Sleep(5000);
-                success = ScheduledTaskUtil.Start(task.Name, task.Server);
-                break;
+            //case ServiceAction.Restart:
+            //    success = ScheduledTaskUtil.Disable( task.Name, task.Server );
+            //    System.Threading.Thread.Sleep( 5000 );
+            //    success = ScheduledTaskUtil.Enable( task.Name, task.Server );
+            //    break;
         }
 
-        status = ScheduledTaskUtil.QueryStatus(task.Name, task.Server);
+        status = ScheduledTaskUtil.QueryStatus( task.Name, task.Server );
 
-        if (status != null)
+        if( status != null )
         {
-            OnLogMessage(action.ToString(), "Name : [" + status.Name + "] Status : [" + status.State + "]");
-            results.Add(status);
+            OnLogMessage( action.ToString(), "Name : [" + status.Name + "] Status : [" + status.State + "]" );
+            results.Add( status );
         }
 
     }
@@ -105,7 +105,7 @@ public class ScheduledTaskHandler : HandlerRuntimeBase
     {
         return new ScheduledTaskHandlerConfig()
         {
-            Action = ServiceAction.Stop,
+            Action = ServiceAction.Disable,
             OutputType = OutputTypeType.Yaml,
             PrettyPrint = true,
             RunSequential = true,

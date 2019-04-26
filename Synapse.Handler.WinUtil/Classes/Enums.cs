@@ -27,7 +27,9 @@ namespace Synapse.Handlers.WinUtil
 		Create,
 		Delete,
 		Query,
-		StartMode
+		StartMode,
+        Enable,
+        Disable
 	}
 
 	//[DataContract( Name = "ServiceStartMode" )]

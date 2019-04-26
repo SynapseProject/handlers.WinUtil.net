@@ -9,14 +9,14 @@ namespace Synapse.Handlers.WinUtil
 {
 	public class ScheduledTaskUtil
 	{
-		/// <summary>
-		/// Queries the status and other configuration properties of a Windows ScheduledTask.
-		/// </summary>
-		/// <param name="taskName">The name of the task as shown in the TaskScheduler Contol Panel applet.</param>
-		/// <param name="machineName">The server on which the service is running.</param>
-		/// <returns>The service configuration details.</returns>
-		public static ScheduledTaskConfig QueryStatus(string taskName, string machineName)
-		{
+        /// <summary>
+        /// Queries the status and other configuration properties of a Windows ScheduledTask.
+        /// </summary>
+        /// <param name="taskName">The name of the task as shown in the TaskScheduler Contol Panel applet.</param>
+        /// <param name="machineName">The server on which the service is running.</param>
+        /// <returns>The service configuration details.</returns>
+        public static ScheduledTaskConfig QueryStatus(string taskName, string machineName)
+        {
 			TaskService ts = new TaskService( machineName );
 			Task task = ts.FindTask( taskName );
 
@@ -35,7 +35,7 @@ namespace Synapse.Handlers.WinUtil
 		/// <param name="taskName">The name of the task as shown in the TaskScheduler Contol Panel applet.</param>
 		/// <param name="machineName">The server on which the service is running.</param>
 		/// <returns>True if status == Running, otherwise false.</returns>
-		public static bool Start(string taskName, string machineName)
+		public static bool Enable(string taskName, string machineName)
 		{
 			TaskService ts = new TaskService( machineName );
 			Task task = ts.FindTask( taskName );
@@ -55,7 +55,7 @@ namespace Synapse.Handlers.WinUtil
 		/// <param name="taskName">The name of the task as shown in the TaskScheduler Contol Panel applet.</param>
 		/// <param name="machineName">The server on which the service is running.</param>
 		/// <returns>True if status == Stopped, otherwise false.</returns>
-		public static bool Stop(string taskName, string machineName)
+		public static bool Disable(string taskName, string machineName)
 		{
 			TaskService ts = new TaskService( machineName );
 			Task task = ts.FindTask( taskName );
@@ -67,7 +67,7 @@ namespace Synapse.Handlers.WinUtil
 				task = ts.FindTask( taskName );
 			}
 
-			return task.IsActive;
+			return !task.IsActive;
 		}
 	}
 }
